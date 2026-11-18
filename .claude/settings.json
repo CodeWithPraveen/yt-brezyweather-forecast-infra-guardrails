@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "Edit(*.bicep)",
+      "Edit(*.bicepparam)",
+      "Bash(az bicep build *)",
+      "Bash(az bicep lint *)",
+      "Bash(az account show *)",
+      "Bash(az group show *)",
+      "Bash(az deployment group what-if *)",
+      "Bash(az deployment group show *)",
+      "Bash(az resource list *)",
+      "Bash(az storage account show *)"
+    ],
+    "ask": [
+      "Bash(az deployment group create *)"
+    ],
+    "deny": [
+      "Bash(az group delete *)",
+      "Bash(az resource delete *)",
+      "Bash(az storage account delete *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-infra.sh\"" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-bicep.sh\"" }
+        ]
+      }
+    ]
+  }
+}
